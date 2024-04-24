@@ -18,7 +18,7 @@ users_fake_db = [User(id = 1, name="Alejandro", surname="Casado", url="casado.co
                  User(id = 2, name="Fernando", surname="Manzanares", url="fernando.com", age = 21),
                  User(id = 3, name="Oriana", surname="Moran", url="oriana.com", age = 27),]
 
-@router.get("/users")
+@router.get("/all")
 async def users():
     return users_fake_db
 
