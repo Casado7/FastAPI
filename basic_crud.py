@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 # start Server: uvicorn basic_crud:app --reload
@@ -30,15 +30,15 @@ async def user(id: int):
 async def user_query(id: int):
     return search_user(id)
 
-@app.post("/user/")
+@app.post("/user/", response_model=User, status_code=201)
 async def user(user: User):
     if type(search_user(user.id)) == User:
-        return {"error":"User alredy exists"}
+        raise HTTPException(status_code=404, detail= "User alredy exists")
     else:
         users_fake_db.append(user)
         return(user)
 
-@app.put("/user/")
+@app.put("/user/", response_model=User)
 async def user(user: User):
     found = False
     for index, saved_user in enumerate(users_fake_db):
@@ -46,7 +46,7 @@ async def user(user: User):
             users_fake_db[index] = user
             found = True
     if not found:
-        return {"error": "User not found"}
+        raise HTTPException(status_code=404, detail= "User not found")
     else:
         return user
     
@@ -58,7 +58,7 @@ async def user(id : int):
             del users_fake_db[index]
             found = True
         if not found:
-           return {"error": "User not found"}
+           raise HTTPException(status_code=404, detail= "User not found")
         else:
             return {"msg": "User deleted"}
 
